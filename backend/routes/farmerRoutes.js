@@ -1,15 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const { handleFarmerSignUp, addProduct, updateProduct, deleteProduct, getAllFarmers } = require("../controllers/farmerController");
-
 
 const {
-	handleFarmerSignUp,
-	getAllFarmersUsername,
-	getApprovedFarmers,
-    getNotApprovedFarmers,
-    approveFarmer,
-	handleFarmerLogin,
+  handleFarmerSignUp,
+  getAllFarmersUsername,
+  getApprovedFarmers,
+  getNotApprovedFarmers,
+  approveFarmer,
+  getAllFarmers,
+  handleFarmerLogin,
 } = require("../controllers/farmerController");
 
 router.post("/register", handleFarmerSignUp);

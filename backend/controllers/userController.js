@@ -110,4 +110,4 @@ const updateUserProfile = async (req, res) => {
 };
 
 
-module.exports = { getAllProducts, getProductById ,handleuserSignUp,handleuserLogin,getUserProfile};
+module.exports = { getAllProducts, getProductById , handleuserSignUp, handleuserLogin, getUserProfile, updateUserProfile };

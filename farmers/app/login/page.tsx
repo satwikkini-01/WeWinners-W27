@@ -10,6 +10,7 @@ export default function LoginPage() {
     const [useOtp, setUseOtp] = useState(false);
     const [mobile, setMobile] = useState("");
     const [token, setToken] = useState("");
+    const [username, setUsername] = useState("");
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [errorMessage, setErrorMessage] = useState("");
     const otpInputs = useRef<Array<HTMLInputElement | null>>([]);
@@ -46,7 +47,7 @@ export default function LoginPage() {
     const handleLogin = async () => {
         setErrorMessage("");
         try {
-            const response = await fetch(`${BACKEND_URL}/login`, {
+            const response = await fetch(`${BACKEND_URL}/farmers/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(
@@ -59,6 +60,7 @@ export default function LoginPage() {
             const data = await response.json();
             if (response.ok) {
                 localStorage.setItem("token", data.token);
+                localStorage.setItem("username", data.username)
                 setToken(data.token);
                 router.push("/home");
             } else {

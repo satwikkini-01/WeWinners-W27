@@ -1,8 +1,9 @@
-const Farmer = require("../models/User");
+const bcrypt = require("bcrypt");
+const { Farmer } = require("../models/User");
 
 async function handleFarmerSignUp(req, res) {
     try {
-        const { firstName, lastName, email, phNumber, kccId, dob, username, password, address } = req.body;
+        const { firstName, lastName, email, phNumber, kccId, dob, username, password } = req.body;
 
         const existingFarmer = await Farmer.findOne({ $or: [{ email }, { username }, { kccId }] });
         if (existingFarmer) {
@@ -21,7 +22,6 @@ async function handleFarmerSignUp(req, res) {
             dob,
             username,
             password: hashedPassword,
-            address
         });
 
         return res.status(201).json({ message: "Farmer registered successfully", farmer: newFarmer });
@@ -31,9 +31,7 @@ async function handleFarmerSignUp(req, res) {
     }
 }
 
-
-
-async function getAllFarmers(req, res) {
+async function getAllFarmersUsername(req, res) {
     try {
         const allFarmers = await Farmer.find({}, "username");
         return res.status(200).json({ farmers: allFarmers });
@@ -45,5 +43,5 @@ async function getAllFarmers(req, res) {
 
 module.exports = {
     handleFarmerSignUp,
-    getAllFarmers,
+    getAllFarmersUsername,
 }

@@ -16,11 +16,11 @@ router.get("/products/:productId", getProductById);
 router.get("/profile", getUserProfile);
 router.put("/profile", updateUserProfile);
 router.get("/orders", getUserOrders);
-router.post("/orders", addUserOrders);
-// router.post("/cart", addToCart);
-// router.get("/cart", getCart);
-// // router.delete("/cart/:id", removeFromCart);
-// router.post("/checkout", checkout);
-// router.post("/review/:productId", addReview);
+router.put("/orders", updateUserOrders);
+router.post("/cart", addToCart);
+router.get("/cart", getCart);
+// router.delete("/cart/:id", removeFromCart);
+router.post("/checkout", checkout);
+router.post("/review/:productId", addReview);
 
 module.exports = router;

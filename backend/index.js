@@ -1,4 +1,5 @@
 const express = require("express");
+const multer = require("multer");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -20,7 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
-// app.use("/user", userRoutes);
+app.use("/users", userRoutes);
 app.use("/farmers", farmerRoutes);
 // app.use("/admin", adminRoutes);
 

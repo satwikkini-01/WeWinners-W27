@@ -30,7 +30,7 @@ export default function RegistrationPage() {
         async function fetchUsernames() {
             try {
                 const response = await fetch(
-                    `${BACKEND_URL}/allfarmersUsername`
+                    `${BACKEND_URL}/farmers/allfarmersUsername`
                 );
                 if (!response.ok)
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -82,7 +82,7 @@ export default function RegistrationPage() {
             return;
 
         try {
-            const response = await fetch(`${BACKEND_URL}/register`, {
+            const response = await fetch(`${BACKEND_URL}/farmers/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),

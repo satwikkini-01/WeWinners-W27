@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import BACKEND_URL from "@/config";
 
 interface Product {
     id: number;
@@ -23,11 +24,11 @@ export default function FarmerHomePage() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const statsResponse = await fetch("/api/sales-stats");
-                const statsData = await statsResponse.json();
-                setSalesStats(statsData);
+                // const statsResponse = await fetch("/api/sales-stats");
+                // const statsData = await statsResponse.json();
+                // setSalesStats(statsData);
 
-                const productsResponse = await fetch("/api/products");
+                const productsResponse = await fetch(`${BACKEND_URL}/users/products`);
                 const productsData = await productsResponse.json();
                 setProducts(productsData);
             } catch (error) {

@@ -1,5 +1,8 @@
 const bcrypt = require("bcrypt");
 const { Farmer } = require("../models/User");
+const Product = require("../models/Product");
+const mongoose = require("mongoose");
+
 const { setUser } = require("../service/farmerAuth");
 
 async function handleFarmerSignUp(req, res) {
@@ -59,6 +62,7 @@ async function handleFarmerLogin(req, res) {
 			message: "Farmer logged in successfully",
 			token,
             farmer,
+            username,
 		});
 	} catch (error) {
 		console.error("Error in farmer login:", error);
@@ -66,22 +70,35 @@ async function handleFarmerLogin(req, res) {
 	}
 }
 
-
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, stock, images, category, manufacturedDate } = req.body;
+      console.log("Received body:", req.body); // Debugging
+      console.log("Received files:", req.files); // Debugging
+  
+      const { name, description, price, stock, category, manufacturedDate, farmerId } = req.body;
+  
+      // Ensure all required fields are provided
+      if (!name || !description || !price || !stock || !category || !manufacturedDate || !farmerId) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+  
+      // Process Image Files
+      const imageUrls = req.files.map((file) => `uploads/${file.originalname}`);
+  
       const newProduct = new Product({
         name,
         description,
         price,
         stock,
-        images,
+        images: imageUrls,
         category,
         manufacturedDate,
-        farmer: req.user.id, 
+        farmerId,
       });
+  
       await newProduct.save();
       res.status(201).json({ message: "Product added successfully", product: newProduct });
+  
     } catch (error) {
       console.error("Error adding product:", error);
       res.status(500).json({ message: "Internal Server Error" });

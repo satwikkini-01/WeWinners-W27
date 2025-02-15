@@ -52,7 +52,7 @@ async function handleFarmerLogin(req, res) {
 		const { username, password } = req.body;
 		const { error, token, farmer } = await setUser(res, username, password);
 		if (error) {
-			return res.status(401).json({ message: farmer.error });
+			return res.status(401).json({ message: error });
 		}
 
 		return res.status(200).json({

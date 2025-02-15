@@ -101,7 +101,7 @@ export default function FarmerHomePage() {
                                     Your Products
                                 </h2>
                                 <button
-                                    onClick={() => router.push("/add-product")}
+                                    onClick={() => router.push("/home/add")}
                                     className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
                                 >
                                     Add Product

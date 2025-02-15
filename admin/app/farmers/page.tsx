@@ -1,87 +1,91 @@
 "use client";
 
+import BACKEND_URL from "../../config";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface Farmer {
-  id: number;
-  name: string;
-  location: string;
-  contact: string;
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phNumber: string;
+  kccId: string;
+  dob: string;
+  username: string;
   approved: boolean;
 }
 
-export default function Farmers() {
+export default function ApprovedFarmers() {
   const [farmers, setFarmers] = useState<Farmer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
 
+  // Ensure the component is only rendered after hydration
   useEffect(() => {
-    fetch("/api/farmers")
-      .then((res) => res.json())
-      .then((data) => {
-        setFarmers(data);
+    setHydrated(true);
+    async function fetchApprovedFarmers() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/farmers/allFarmers`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        const data = await res.json();
+        if (Array.isArray(data.farmers)) {
+          setFarmers(data.farmers);
+        } else {
+          console.error("Invalid response format: Expected an array inside 'farmers'");
+        }
+      } catch (error) {
+        console.error("Error fetching approved farmers:", error);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    }
+    fetchApprovedFarmers();
   }, []);
 
-  async function approveFarmer(id: number) {
-    await fetch(`/api/farmers/${id}/approve`, { method: "POST" });
-    setFarmers(farmers.map(farmer => 
-      farmer.id === id ? { ...farmer, approved: true } : farmer
-    ));
+  if (!hydrated) {
+    return null; // Prevents hydration mismatch by rendering nothing initially
   }
 
   return (
     <div className="min-h-screen p-6 bg-gray-100">
-      <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <div className="max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-lg">
         <div className="flex justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Farmers List</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Approved Farmers</h1>
           <Link
             href="/farmers/pending"
             className="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition"
           >
-            Approve Farmers
+            Manage Pending Farmers
           </Link>
         </div>
         {loading ? (
           <p className="text-gray-600">Loading...</p>
         ) : farmers.length === 0 ? (
-          <p className="text-gray-600">No Farmers Available</p>
+          <p className="text-gray-600 text-center">No Approved Farmers</p>
         ) : (
-          <table className="w-full border border-gray-300">
+          <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
             <thead>
               <tr className="bg-gray-200">
-                <th className="p-2">Name</th>
-                <th className="p-2">Location</th>
-                <th className="p-2">Contact</th>
-                <th className="p-2">Status</th>
-                <th className="p-2">Actions</th>
+                <th className="p-3 text-left">Full Name</th>
+                <th className="p-3 text-left">Email</th>
+                <th className="p-3 text-left">Phone Number</th>
+                <th className="p-3 text-left">KCC ID</th>
+                <th className="p-3 text-left">Date of Birth</th>
+                <th className="p-3 text-left">Username</th>
               </tr>
             </thead>
             <tbody>
               {farmers.map((farmer) => (
-                <tr key={farmer.id} className="border-t">
-                  <td className="p-2">{farmer.name}</td>
-                  <td className="p-2">{farmer.location}</td>
-                  <td className="p-2">{farmer.contact}</td>
-                  <td className="p-2">
-                    {farmer.approved ? (
-                      <span className="text-green-600">Approved</span>
-                    ) : (
-                      <button 
-                        className="text-yellow-500 hover:underline" 
-                        onClick={() => approveFarmer(farmer.id)}
-                      >
-                        Approve
-                      </button>
-                    )}
-                  </td>
-                  <td className="p-2">
-                    <Link href={`/farmers/${farmer.id}`} className="text-blue-500 hover:underline">
-                      Edit
-                    </Link>
-                  </td>
+                <tr key={farmer._id} className="border-t">
+                  <td className="p-3">{farmer.firstName} {farmer.lastName}</td>
+                  <td className="p-3">{farmer.email}</td>
+                  <td className="p-3">{farmer.phNumber}</td>
+                  <td className="p-3">{farmer.kccId}</td>
+                  <td className="p-3">{farmer.dob}</td>
+                  <td className="p-3">{farmer.username}</td>
                 </tr>
               ))}
             </tbody>

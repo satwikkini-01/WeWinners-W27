@@ -7,6 +7,7 @@ const { connectMongoDb } = require("./connectDB");
 const userRoutes = require("./routes/userRoutes.js");
 const farmerRoutes = require("./routes/farmerRoutes.js");
 const adminRoutes = require("./routes/adminRoutes.js");
+const subscriptionRoutes = require("./routes/subscriptionRoutes.js");
 
 dotenv.config();
 connectMongoDb(process.env.MONGO_URI).then(() =>
@@ -23,6 +24,7 @@ app.use(cors());
 // app.use("/user", userRoutes);
 app.use("/farmers", farmerRoutes);
 // app.use("/admin", adminRoutes);
+app.use("/subscriptions", subscriptionRoutes);
 
 app.get("/", (req, res) => {
 	res.send("Backend is running...");

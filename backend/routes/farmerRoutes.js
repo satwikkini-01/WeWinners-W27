@@ -23,6 +23,6 @@ router.post("/login", handleFarmerLogin);
 router.get("/allfarmersUsername", getAllFarmersUsername);
 router.get("/allfarmers", getApprovedFarmers);
 router.get("/pendingFarmers", getNotApprovedFarmers);
-router.patch("/approveFarmer", approveFarmer);
+router.patch("/approveFarmer", approveFarmer);  
 
 module.exports = router;

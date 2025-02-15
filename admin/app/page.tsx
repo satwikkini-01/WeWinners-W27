@@ -1,6 +1,19 @@
+"use client"; // Ensure the page is treated as a client component
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function Home() {
+    const [hydrated, setHydrated] = useState(false);
+
+    useEffect(() => {
+        setHydrated(true); // Ensures the component renders after hydration
+    }, []);
+
+    if (!hydrated) {
+        return null; // Prevents hydration mismatch by returning nothing on first render
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white p-10 rounded-lg shadow-lg text-center">

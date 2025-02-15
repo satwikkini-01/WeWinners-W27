@@ -1,14 +1,20 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import BACKEND_URL from "../../config";
 
 export default function LoginPage() {
     const [farmerId, setFarmerId] = useState("");
     const [password, setPassword] = useState("");
     const [useOtp, setUseOtp] = useState(false);
     const [mobile, setMobile] = useState("");
+    const [token, setToken] = useState("");
+    const [username, setUsername] = useState("");
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
+    const [errorMessage, setErrorMessage] = useState("");
     const otpInputs = useRef<Array<HTMLInputElement | null>>([]);
+    const router = useRouter();
 
     const handleOtpChange = (index: number, value: string) => {
         if (/^[0-9]?$/.test(value)) {
@@ -38,13 +44,32 @@ export default function LoginPage() {
         }
     };
 
-    const handleLogin = () => {
-        if (useOtp && otp.join("").length < 6) return;
-        console.log(
-            useOtp
-                ? `Logging in with OTP: ${otp.join("")}`
-                : `Logging in with ID: ${farmerId}`
-        );
+    const handleLogin = async () => {
+        setErrorMessage("");
+        try {
+            const response = await fetch(`${BACKEND_URL}/farmers/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(
+                    useOtp
+                        ? { mobile, otp: otp.join("") }
+                        : { username: farmerId, password }
+                ),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("username", data.username)
+                setToken(data.token);
+                router.push("/home");
+            } else {
+                setErrorMessage(data.message);
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            setErrorMessage("An error occurred. Please try again.");
+        }
     };
 
     return (
@@ -56,18 +81,15 @@ export default function LoginPage() {
                 <div className="mt-4">
                     {useOtp ? (
                         <>
-                            <div className="relative">
+                            <div>
+                                <label className="block text-gray-700">Mobile Number</label>
                                 <input
                                     type="text"
                                     value={mobile}
                                     onChange={handleMobileChange}
                                     maxLength={10}
-                                    className="w-full p-2 border border-gray-300 rounded mt-2 peer"
-                                    placeholder=" "
+                                    className="w-full p-2 border border-gray-300 rounded mt-2"
                                 />
-                                <label className="absolute left-2 top-2 text-gray-500 text-sm transition-all bg-white px-1 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent peer-placeholder-shown:px-0 peer-focus:top-0 peer-focus:text-xs peer-focus:text-green-700 peer-focus:bg-white peer-focus:px-1">
-                                    Mobile Number
-                                </label>
                             </div>
                             <div className="flex justify-center space-x-2 mt-2">
                                 {otp.map((digit, index) => (
@@ -95,44 +117,37 @@ export default function LoginPage() {
                         </>
                     ) : (
                         <>
-                            <div className="relative">
+                            <div>
+                                <label className="block text-gray-700">Farmer ID</label>
                                 <input
                                     type="text"
                                     value={farmerId}
-                                    onChange={(e) =>
-                                        setFarmerId(e.target.value)
-                                    }
-                                    className="w-full p-2 border border-gray-300 rounded mt-2 peer"
-                                    placeholder=" "
+                                    onChange={(e) => setFarmerId(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded mt-2"
                                 />
-                                <label className="absolute left-2 top-2 text-gray-500 text-sm transition-all bg-white px-1 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent peer-placeholder-shown:px-0 peer-focus:top-0 peer-focus:text-xs peer-focus:text-green-700 peer-focus:bg-white peer-focus:px-1">
-                                    Farmer ID
-                                </label>
                             </div>
-                            <div className="relative">
+                            <div>
+                                <label className="block text-gray-700">Password</label>
                                 <input
                                     type="password"
                                     value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
-                                    className="w-full p-2 border border-gray-300 rounded mt-2 peer"
-                                    placeholder=" "
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded mt-2"
                                 />
-                                <label className="absolute left-2 top-2 text-gray-500 text-sm transition-all bg-white px-1 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent peer-placeholder-shown:px-0 peer-focus:top-0 peer-focus:text-xs peer-focus:text-green-700 peer-focus:bg-white peer-focus:px-1">
-                                    Password
-                                </label>
                             </div>
                         </>
                     )}
+                    {errorMessage && (
+                        <p className="text-red-600 text-sm mt-2">{errorMessage}</p>
+                    )}
                     <button
                         onClick={handleLogin}
-                        disabled={useOtp && otp.join("").length < 6}
                         className={`w-full p-2 rounded mt-4 ${
-                            useOtp && otp.join("").length < 6
+                            useOtp && otp.join(" ").length < 6
                                 ? "bg-gray-400"
                                 : "bg-green-600 hover:bg-green-700 text-white"
                         }`}
+                        disabled={useOtp && otp.join(" ").length < 6}
                     >
                         Login
                     </button>
@@ -144,7 +159,7 @@ export default function LoginPage() {
                     </button>
                 </div>
                 <p className="text-center mt-4 text-gray-600">
-                    New to our website?{" "}
+                    New to our website? {" "}
                     <a
                         href="/register"
                         className="text-green-700 font-semibold"

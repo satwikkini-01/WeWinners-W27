@@ -93,14 +93,10 @@ const getUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   try {
     const { name, email, phone, address } = req.body;
-
     const user = await User.findById(req.user.id);
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    // Update fields if provided
     if (name) user.name = name;
     if (email) user.email = email;
     if (phone) user.phone = phone;

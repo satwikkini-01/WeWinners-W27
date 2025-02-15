@@ -1,4 +1,4 @@
-const Subscription = require("../models/Subscription");
+const Subscription = require("../models/subscription");
 
 // Function to calculate the next delivery date based on frequency
 const calculateNextDelivery = (startDate, frequency) => {

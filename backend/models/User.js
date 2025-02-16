@@ -23,7 +23,7 @@ const farmerSchema = mongoose.Schema(
 		username: { type: String, required: true, unique: true },
 		password: { type: String, required: true },
 		address: { type: mongoose.Schema.Types.ObjectId, ref: "Address" },
-        approved: { type: Boolean, default: false },
+		approved: { type: Boolean, default: false },
 	},
 	{ timestamps: true }
 );

@@ -4,14 +4,16 @@ const router = express.Router();
 
 const {
 	handleFarmerSignUp,
-    addProduct,
-    updateProduct,
-    deleteProduct,
+	addProduct,
+	updateProduct,
+	deleteProduct,
 	getAllFarmersUsername,
 	getApprovedFarmers,
-    getNotApprovedFarmers,
-    approveFarmer,
+	getNotApprovedFarmers,
+	approveFarmer,
 	handleFarmerLogin,
+	getFarmerSales,
+	getFarmerOrdersStats,
 } = require("../controllers/farmerController");
 
 const storage = multer.memoryStorage();
@@ -31,6 +33,9 @@ router.delete("/products/:id", deleteProduct);
 router.get("/allfarmersUsername", getAllFarmersUsername);
 router.get("/allfarmers", getApprovedFarmers);
 router.get("/pendingFarmers", getNotApprovedFarmers);
-router.patch("/approveFarmer", approveFarmer);  
+router.patch("/approveFarmer", approveFarmer);
+
+router.get("/sales/:farmerId", getFarmerSales);
+router.get("/orders/stats/:farmerId", getFarmerOrdersStats);
 
 module.exports = router;

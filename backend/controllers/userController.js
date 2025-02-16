@@ -66,15 +66,35 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+const getAllProductsFarmer = async (req, res) => {
+  try {
+    const { username } = req.params; // Get username from request params
+    console.log(username)
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    // Find products belonging to the farmer with stock > 0
+    const products = await Product.find({ farmerId: username, stock: { $gt: 0 } })
+      .sort({ soldCount: -1 });
+
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching products", error: err });
+  }
+};
+
+
 const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.productId);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    const { productId } = req.params;
+    const product = await Product.findOne({productId: productId});
+    if (!product) return res.status(404).json({ error: 'Product not found' });
     res.status(200).json(product);
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error fetching product details", error: err });
+  } catch (error) {
+    console.log("error fetching product", error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -225,4 +245,5 @@ module.exports = {
   updateUserProfile,
   addUserOrders,
   getUserOrders,
+  getAllProductsFarmer,
 };

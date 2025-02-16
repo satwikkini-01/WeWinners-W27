@@ -1,5 +1,4 @@
 const express = require("express");
-const multer = require("multer");
 const router = express.Router();
 
 const {
@@ -12,10 +11,8 @@ const {
     getNotApprovedFarmers,
     approveFarmer,
 	handleFarmerLogin,
+    upload,
 } = require("../controllers/farmerController");
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
 
 router.post("/register", handleFarmerSignUp);
 router.post("/login", handleFarmerLogin);

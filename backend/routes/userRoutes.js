@@ -31,5 +31,12 @@ router.delete("/cart/:productId", removeFromCart);
 // router.post("/checkout", checkout);
 router.post("/review/:productId", addReview);
 router.get("/review/:productId", getProductReviews);
+router.get("/productOfFarmer/:username", getAllProductsFarmer);
+// router.put("/orders", updateUserOrders);
+// router.post("/cart", addToCart);
+// router.get("/cart", getCart);
+// router.delete("/cart/:id", removeFromCart);
+// router.post("/checkout", checkout);
+// router.post("/review/:productId", addReview);
 
 module.exports = router;

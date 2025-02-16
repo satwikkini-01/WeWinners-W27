@@ -67,6 +67,26 @@ const getAllProducts = async (req, res) => {
 	}
 };
 
+const getAllProductsFarmer = async (req, res) => {
+  try {
+    const { username } = req.params; // Get username from request params
+    console.log(username)
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    // Find products belonging to the farmer with stock > 0
+    const products = await Product.find({ farmerId: username, stock: { $gt: 0 } })
+      .sort({ soldCount: -1 });
+
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching products", error: err });
+  }
+};
+
+
 const getProductById = async (req, res) => {
 	try {
 		const product = await Product.findById(req.params.productId);

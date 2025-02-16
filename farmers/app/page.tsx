@@ -27,7 +27,7 @@ export default function HomePage() {
 
       {/* Navbar */}
       <nav className="absolute top-0 left-0 right-0 flex justify-between items-center p-5 bg-white bg-opacity-90 shadow-md">
-        <h1 className="text-2xl font-bold text-green-700">Farm Fresh</h1>
+        <h1 className="text-2xl font-bold text-green-700">Go Grain</h1>
         <div>
           <a href="/login" className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700">Sign In</a>
           <a href="/register" className="ml-4 px-4 py-2 bg-white text-green-600 border border-green-600 rounded-lg shadow hover:bg-green-50">Register as Farmer</a>

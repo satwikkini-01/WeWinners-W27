@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BACKEND_URL from "@/config";
+import Link from "next/link";
+import Cookies from "js-cookie";
 
 interface Product {
     id: number;
+    productId: string;
     name: string;
     price: number;
     stock: number;
@@ -21,14 +24,25 @@ export default function FarmerHomePage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const handleLogout = () => {
+        Cookies.remove("token"); // Remove auth token cookie (modify as per your app)
+        Cookies.remove("userId"); // Remove user ID cookie if stored
+
+        router.push("/");
+    };
+
     useEffect(() => {
         async function fetchData() {
             try {
+                const userId = localStorage.getItem("username");
+                console.log(userId)
                 // const statsResponse = await fetch("/api/sales-stats");
                 // const statsData = await statsResponse.json();
                 // setSalesStats(statsData);
 
-                const productsResponse = await fetch(`${BACKEND_URL}/users/products`);
+                const productsResponse = await fetch(
+                    `${BACKEND_URL}/users/productOfFarmer/${userId}`
+                );
                 const productsData = await productsResponse.json();
                 setProducts(productsData);
             } catch (error) {
@@ -52,7 +66,9 @@ export default function FarmerHomePage() {
                     <li className="cursor-pointer">Orders</li>
                     <li className="cursor-pointer">Inventory</li>
                     <li className="cursor-pointer">Payments</li>
-                    <li className="cursor-pointer">Support</li>
+                    <li className="cursor-pointer" onClick={handleLogout}>
+                        Logout
+                    </li>
                 </ul>
             </nav>
 
@@ -115,20 +131,25 @@ export default function FarmerHomePage() {
                             ) : (
                                 <div className="grid grid-cols-2 gap-4">
                                     {products.map((product) => (
-                                        <div
-                                            key={product.id}
-                                            className="p-4 bg-green-50 rounded-lg shadow"
+                                        <Link
+                                            key={product.productId}
+                                            href={`/home/${product.productId}`}
                                         >
-                                            <h3 className="text-lg font-bold text-green-700">
-                                                {product.name}
-                                            </h3>
-                                            <p className="text-gray-600">
-                                                Stock: {product.stock}
-                                            </p>
-                                            <p className="text-gray-600">
-                                                Price: ₹{product.price}
-                                            </p>
-                                        </div>
+                                            <div
+                                                key={product.productId}
+                                                className="p-4 bg-green-50 rounded-lg shadow"
+                                            >
+                                                <h3 className="text-lg font-bold text-green-700">
+                                                    {product.name}
+                                                </h3>
+                                                <p className="text-gray-600">
+                                                    Stock: {product.stock}
+                                                </p>
+                                                <p className="text-gray-600">
+                                                    Price: ₹{product.price}
+                                                </p>
+                                            </div>
+                                        </Link>
                                     ))}
                                 </div>
                             )}

@@ -299,7 +299,7 @@ const addReview = async (req, res) => {
 		const { productId } = req.params;
 		const { rating, comment } = req.body;
 		const userId = req.user.id; // Extracted from JWT via verifyToken middleware
-		const image = req.file ? /uploads/reviews/${req.file.filename} : null; // Store image path if uploaded
+		const image = req.file ? `/uploads/reviews/${req.file.filename}` : null; // Store image path if uploaded
 
 		// Validate rating
 		if (!rating || rating < 1 || rating > 5) {

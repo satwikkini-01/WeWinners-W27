@@ -162,10 +162,7 @@ const generateUniqueProductId = async () => {
   };
 
 const addProduct = async (req, res) => {
-    try {
-      console.log("Received body:", req.body); // Debugging
-      console.log("Received files:", req.files); // Debugging
-  
+    try {  
       const { name, description, price, stock, category, manufacturedDate, farmerId } = req.body;
   
       // Ensure all required fields are provided
@@ -173,10 +170,11 @@ const addProduct = async (req, res) => {
         return res.status(400).json({ message: "All fields are required" });
       }
   
-      // Process Image Files
       const imageUrls = req.files.map((file) => `uploads/${file.originalname}`);
+      const productId = await generateUniqueProductId();
   
       const newProduct = new Product({
+        productId,
         name,
         description,
         price,
@@ -195,7 +193,56 @@ const addProduct = async (req, res) => {
       res.status(500).json({ message: "Internal Server Error" });
     }
   };
+	try {
+		console.log("Received body:", req.body); // Debugging
+		console.log("Received files:", req.files); // Debugging
 
+		const {
+			name,
+			description,
+			price,
+			stock,
+			category,
+			manufacturedDate,
+			farmerId,
+		} = req.body;
+
+		// Ensure all required fields are provided
+		if (
+			!name ||
+			!description ||
+			!price ||
+			!stock ||
+			!category ||
+			!manufacturedDate ||
+			!farmerId
+		) {
+			return res.status(400).json({ message: "All fields are required" });
+		}
+
+		// Process Image Files
+		const imageUrls = req.files.map((file) => `uploads/${file.originalname}`);
+
+		const newProduct = new Product({
+			name,
+			description,
+			price,
+			stock,
+			images: imageUrls,
+			category,
+			manufacturedDate,
+			farmerId,
+		});
+
+		await newProduct.save();
+		res
+			.status(201)
+			.json({ message: "Product added successfully", product: newProduct });
+	} catch (error) {
+		console.error("Error adding product:", error);
+		res.status(500).json({ message: "Internal Server Error" });
+	}
+};
 
 const updateProduct = async (req, res) => {
 	try {
@@ -315,4 +362,11 @@ module.exports = {
     addProduct,
     updateProduct,
     deleteProduct,
+    upload
+	getAllFarmers,
+	addProduct,
+	updateProduct,
+	deleteProduct,
+	getFarmerSales,
+	getFarmerOrdersStats,
 };
